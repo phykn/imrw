@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from pathlib import Path
-from kimio import imread, imwrite
+from imio import imread, imwrite
 
 def test_im_ops(tmp_path: Path):
     path = tmp_path / "test.png"

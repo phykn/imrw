@@ -1,4 +1,4 @@
-# kimio
+# imio
 Minimal image I/O library for Python.
 
 ## Features
@@ -11,7 +11,7 @@ pip install .
 ```
 
 ```python
-from kimio import imread, imwrite
+from imio import imread, imwrite
 
 image = imread("input.png")
 imwrite("output.png", image)

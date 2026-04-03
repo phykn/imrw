@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "kimio"
+name = "imio"
 version = "0.1.0"
 dependencies = [
     "numpy",
