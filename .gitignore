@@ -1,11 +1,28 @@
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
 .venv/
 venv/
+
+# Tooling caches
 .ruff_cache/
 .pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
 .ipynb_checkpoints/
 *.egg-info/
 dist/
 build/
+
+# Local/editor files
 .DS_Store
+.vscode/
+.idea/
+.codex
+AGENTS.md
