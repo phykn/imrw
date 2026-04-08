@@ -1,4 +1,4 @@
-# imio
+# imrw
 Minimal image I/O library for Python.
 
 ## Features
@@ -9,11 +9,11 @@ Minimal image I/O library for Python.
 
 ## Quick Start
 ```bash
-pip install .
+pip install imrw
 ```
 
 ```python
-from imio import imread, imwrite
+from imrw import imread, imwrite
 
 image = imread("input.png")
 imwrite("output.png", image)

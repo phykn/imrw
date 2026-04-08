@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from pathlib import Path
-from im_io import imread, imwrite
+from imrw import imread, imwrite
 
 
 def test_im_ops_roundtrip(tmp_path: Path):
