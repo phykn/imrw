@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from pathlib import Path
-from imio import imread, imwrite
+from im_io import imread, imwrite
 
 
 def test_im_ops_roundtrip(tmp_path: Path):
@@ -38,3 +38,28 @@ def test_imwrite_rejects_invalid_channel_count(tmp_path: Path):
 
     with pytest.raises(ValueError, match="channel count"):
         imwrite(path, img)
+
+
+def test_imwrite_grayscale_2d(tmp_path: Path):
+    path = tmp_path / "gray.png"
+    img = np.full((10, 10), 128, dtype=np.uint8)
+
+    imwrite(path, img)
+    assert path.exists()
+
+
+def test_imwrite_grayscale_3d(tmp_path: Path):
+    path = tmp_path / "gray3d.png"
+    img = np.full((10, 10, 1), 128, dtype=np.uint8)
+
+    imwrite(path, img)
+    assert path.exists()
+
+
+def test_imwrite_rgba(tmp_path: Path):
+    path = tmp_path / "rgba.png"
+    img = np.zeros((10, 10, 4), dtype=np.uint8)
+    img[..., 3] = 255
+
+    imwrite(path, img)
+    assert path.exists()

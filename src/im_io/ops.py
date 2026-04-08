@@ -27,4 +27,7 @@ def imwrite(path: str | Path, img: np.ndarray, **kwargs: Any) -> None:
             f"got shape={img.shape}"
         )
 
+    if img.ndim == 3 and img.shape[2] == 1:
+        img = img[:, :, 0]
+
     Image.fromarray(img).save(path, **kwargs)
