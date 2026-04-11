@@ -63,3 +63,41 @@ def test_imwrite_rgba(tmp_path: Path):
 
     imwrite(path, img)
     assert path.exists()
+
+
+def test_rgba_roundtrip(tmp_path: Path):
+    path = tmp_path / "rgba_rt.png"
+    img = np.zeros((10, 10, 4), dtype=np.uint8)
+    img[..., 3] = 255
+    img[0, 0] = [255, 0, 0, 128]
+
+    imwrite(path, img)
+    loaded = imread(path)
+
+    assert loaded.shape == (10, 10, 4)
+    assert loaded.dtype == np.uint8
+    assert np.array_equal(img, loaded)
+
+
+def test_grayscale_2d_roundtrip(tmp_path: Path):
+    path = tmp_path / "gray_rt.png"
+    img = np.full((10, 10), 128, dtype=np.uint8)
+    img[0, 0] = 42
+
+    imwrite(path, img)
+    loaded = imread(path)
+
+    assert loaded.shape == (10, 10)
+    assert loaded.dtype == np.uint8
+    assert np.array_equal(img, loaded)
+
+
+def test_grayscale_3d_reads_back_as_2d(tmp_path: Path):
+    path = tmp_path / "gray3d_rt.png"
+    img = np.full((10, 10, 1), 128, dtype=np.uint8)
+
+    imwrite(path, img)
+    loaded = imread(path)
+
+    assert loaded.shape == (10, 10)
+    assert np.array_equal(img[:, :, 0], loaded)
