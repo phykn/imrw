@@ -7,11 +7,25 @@ name = "imrw"
 version = "0.1.2"
 description = "Minimal image I/O library wrapping Pillow and numpy."
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.10"
+authors = [
+    { name = "phykn" },
+]
+keywords = ["image", "imread", "imwrite", "pillow", "numpy"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
 dependencies = [
     "numpy",
     "pillow",
 ]
+
+[project.urls]
+Homepage = "https://github.com/phykn/imrw"
+Repository = "https://github.com/phykn/imrw"
+Issues = "https://github.com/phykn/imrw/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
