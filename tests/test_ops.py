@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 from pathlib import Path
+from PIL import Image
 from imrw import imread, imwrite
 
 
@@ -78,3 +79,61 @@ def test_grayscale_3d_reads_as_rgb(tmp_path: Path):
     assert loaded.shape == (10, 10, 3)
     expected = np.stack([img[:, :, 0]] * 3, axis=-1)
     assert np.array_equal(expected, loaded)
+
+
+def test_uint16_tiff_reads_scaled_to_uint8(tmp_path: Path):
+    path = tmp_path / "16bit.tif"
+    data = np.linspace(0, 65535, 100 * 100, dtype=np.uint16).reshape(100, 100)
+    Image.fromarray(data).save(path)
+
+    loaded = imread(path)
+
+    assert loaded.shape == (100, 100, 3)
+    assert loaded.dtype == np.uint8
+    assert loaded.min() == 0
+    assert loaded.max() == 255
+    assert 120 < loaded.mean() < 135
+    assert np.array_equal(loaded[..., 0], loaded[..., 1])
+    assert np.array_equal(loaded[..., 1], loaded[..., 2])
+
+
+def test_int32_tiff_reads_scaled_to_uint8(tmp_path: Path):
+    path = tmp_path / "32bit.tif"
+    data = np.linspace(0, 65535, 100 * 100, dtype=np.int32).reshape(100, 100)
+    Image.fromarray(data, mode="I").save(path)
+
+    loaded = imread(path)
+
+    assert loaded.shape == (100, 100, 3)
+    assert loaded.dtype == np.uint8
+    assert loaded.min() == 0
+    assert loaded.max() == 255
+    assert 120 < loaded.mean() < 135
+
+
+def test_float_tiff_reads_scaled_to_uint8(tmp_path: Path):
+    path = tmp_path / "float.tif"
+    data = np.linspace(0, 1, 100 * 100, dtype=np.float32).reshape(100, 100)
+    Image.fromarray(data, mode="F").save(path)
+
+    loaded = imread(path)
+
+    assert loaded.shape == (100, 100, 3)
+    assert loaded.dtype == np.uint8
+    assert loaded.min() == 0
+    assert loaded.max() == 255
+    assert 120 < loaded.mean() < 135
+
+
+def test_fake_tif_extension_reads_correctly(tmp_path: Path):
+    path = tmp_path / "fake.tif"
+    data = np.zeros((50, 50, 3), dtype=np.uint8)
+    data[0, 0] = [255, 0, 0]
+    data[1, 1] = [0, 128, 0]
+    Image.fromarray(data).save(path, format="PNG")
+
+    loaded = imread(path)
+
+    assert loaded.shape == (50, 50, 3)
+    assert loaded.dtype == np.uint8
+    assert np.array_equal(data, loaded)
