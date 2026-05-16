@@ -5,6 +5,11 @@ from PIL import Image
 from imrw import imread, imwrite
 
 
+def pillow_rgb_array(path: Path) -> np.ndarray:
+    with Image.open(path) as img:
+        return np.array(img.convert("RGB"))
+
+
 def test_im_ops_roundtrip(tmp_path: Path):
     path = tmp_path / "test.png"
     img = np.zeros((10, 10, 3), dtype=np.uint8)
@@ -81,48 +86,43 @@ def test_grayscale_3d_reads_as_rgb(tmp_path: Path):
     assert np.array_equal(expected, loaded)
 
 
-def test_uint16_tiff_reads_scaled_to_uint8(tmp_path: Path):
+def test_uint16_tiff_reads_like_pillow_rgb_convert(tmp_path: Path):
     path = tmp_path / "16bit.tif"
     data = np.linspace(0, 65535, 100 * 100, dtype=np.uint16).reshape(100, 100)
     Image.fromarray(data).save(path)
 
     loaded = imread(path)
+    expected = pillow_rgb_array(path)
 
-    assert loaded.shape == (100, 100, 3)
+    assert loaded.shape == expected.shape
     assert loaded.dtype == np.uint8
-    assert loaded.min() == 0
-    assert loaded.max() == 255
-    assert 120 < loaded.mean() < 135
-    assert np.array_equal(loaded[..., 0], loaded[..., 1])
-    assert np.array_equal(loaded[..., 1], loaded[..., 2])
+    assert np.array_equal(expected, loaded)
 
 
-def test_int32_tiff_reads_scaled_to_uint8(tmp_path: Path):
+def test_int32_tiff_reads_like_pillow_rgb_convert(tmp_path: Path):
     path = tmp_path / "32bit.tif"
-    data = np.linspace(0, 65535, 100 * 100, dtype=np.int32).reshape(100, 100)
+    data = np.array([[0, 1, 255, 256, 65535]], dtype=np.int32)
     Image.fromarray(data, mode="I").save(path)
 
     loaded = imread(path)
+    expected = pillow_rgb_array(path)
 
-    assert loaded.shape == (100, 100, 3)
+    assert loaded.shape == expected.shape
     assert loaded.dtype == np.uint8
-    assert loaded.min() == 0
-    assert loaded.max() == 255
-    assert 120 < loaded.mean() < 135
+    assert np.array_equal(expected, loaded)
 
 
-def test_float_tiff_reads_scaled_to_uint8(tmp_path: Path):
+def test_float_tiff_reads_like_pillow_rgb_convert(tmp_path: Path):
     path = tmp_path / "float.tif"
-    data = np.linspace(0, 1, 100 * 100, dtype=np.float32).reshape(100, 100)
+    data = np.array([[0.0, 0.5, 1.0, 255.0]], dtype=np.float32)
     Image.fromarray(data, mode="F").save(path)
 
     loaded = imread(path)
+    expected = pillow_rgb_array(path)
 
-    assert loaded.shape == (100, 100, 3)
+    assert loaded.shape == expected.shape
     assert loaded.dtype == np.uint8
-    assert loaded.min() == 0
-    assert loaded.max() == 255
-    assert 120 < loaded.mean() < 135
+    assert np.array_equal(expected, loaded)
 
 
 def test_fake_tif_extension_reads_correctly(tmp_path: Path):

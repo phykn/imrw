@@ -6,16 +6,7 @@ from PIL import Image
 
 def imread(path: str | Path) -> np.ndarray:
     with Image.open(path) as img:
-        mode = img.mode
-        if mode.startswith("I;16"):
-            arr = (np.asarray(img, dtype=np.uint16) >> 8).astype(np.uint8)
-        elif mode == "I":
-            arr = (np.clip(np.asarray(img), 0, 65535).astype(np.uint16) >> 8).astype(np.uint8)
-        elif mode == "F":
-            arr = (np.clip(np.asarray(img), 0.0, 1.0) * 255).astype(np.uint8)
-        else:
-            return np.array(img.convert("RGB"))
-        return np.stack([arr] * 3, axis=-1)
+        return np.array(img.convert("RGB"))
 
 
 def imwrite(path: str | Path, img: np.ndarray, **kwargs) -> None:
